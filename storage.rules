@@ -1,0 +1,22 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow all operations for property images (for development)
+    // In production, restrict this based on authentication
+    match /property_images/{propertyId}/{imageFile} {
+      allow read, write, delete, list: if true;
+      allow get, list: if true;
+    }
+    
+    // Allow reading of all files (for displaying images)
+    match /{allPaths=**} {
+      allow read, get, list: if true;
+    }
+    
+    // Allow write access for authenticated users or for development
+    match /{allPaths=**} {
+      allow write, delete: if true; // Change to 'if request.auth != null' in production
+    }
+  }
+}
